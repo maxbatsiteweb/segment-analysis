@@ -136,7 +136,7 @@ if uploaded_file is not None:
     # filtres
     
     # drop les pentes au dessus et en dessous de 20%
-    #df_segment = df_segment[(df_segment.grad <= 20) & (df_segment.grad >= -20)]
+    df_segment = df_segment[(df_segment.grad <= 35) & (df_segment.grad >= -35)]
     df_segment.dropna(inplace=True)
     
     df_segment["part_2"] = df_segment.apply(lambda x: 0 if x.seconds_start < df_segment.seconds_start.max()/2 else 1, axis=1)
