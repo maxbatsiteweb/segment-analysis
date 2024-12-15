@@ -145,8 +145,8 @@ if uploaded_file is not None:
     df_part_2_two = df_segment[df_segment.part_2 == 1]
     
     # Régression polynomiale (degré 3)
-    model1 = np.poly1d(np.polyfit(df_part_2_one['grad'], df_part_2_one['pace'], deg=4))
-    model2 = np.poly1d(np.polyfit(df_part_2_two['grad'], df_part_2_two['pace'], deg=4))
+    model1 = np.poly1d(np.polyfit(df_part_2_one['grad'], df_part_2_one['pace'], deg=3))
+    model2 = np.poly1d(np.polyfit(df_part_2_two['grad'], df_part_2_two['pace'], deg=3))
     
     polyline = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 50)
     
