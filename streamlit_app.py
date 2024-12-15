@@ -1,5 +1,18 @@
 import streamlit as st
 
+import os
+import gpxpy
+import pandas as pd
+import matplotlib.pyplot as plt
+from geopy import distance #for the vincenty distance calculation
+import datetime
+import numpy as np
+import gpxo
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.ndimage import uniform_filter1d
+import matplotlib.image as image
+
 st.title("🎈 My new app")
 st.write(
     "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
