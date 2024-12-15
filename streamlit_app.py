@@ -17,9 +17,11 @@ import matplotlib.image as image
 import gpxpy
 import pandas as pd
 
+uploaded_file = st.file_uploader("Téléchargez un fichier GPX", type=["gpx"])
+
 # Charger le fichier GPX
-gpx_file = 'alsace.gpx'  # Remplacez par le chemin de votre fichier GPX
-with open(gpx_file, 'r') as f:
+#gpx_file = 'alsace.gpx'  # Remplacez par le chemin de votre fichier GPX
+with open(uploaded_file, 'r') as f:
     gpx = gpxpy.parse(f)
 
 # Extraire les points de trace
