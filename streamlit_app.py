@@ -1,5 +1,5 @@
 import streamlit as st
-
+import scipy
 import os
 import gpxpy
 import pandas as pd
