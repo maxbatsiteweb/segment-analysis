@@ -168,13 +168,13 @@ ax.scatter(df_segment['grad'], df_segment['pace'], c=colors, label='Première pa
 ax.plot(polyline, model1(polyline), color='green')
 ax.plot(polyline, model2(polyline), color='red')
 
-ax.ylim(0.1, 1)  # Limites de l'axe Y entre 0 et 70
+ax.set_ylim(0.1, 1)  # Limites de l'axe Y entre 0 et 70
 
 
 # Ajouter des titres et des labels
-ax.title('Allure vs Pente', fontsize=16)
-ax.xlabel('Gradient %', fontsize=14)
-ax.ylabel('Pace sec/mètres', fontsize=14)
+ax.set_title('Allure vs Pente', fontsize=16)
+ax.set_xlabel('Gradient %', fontsize=14)
+ax.set_ylabel('Pace sec/mètres', fontsize=14)
 ax.grid(True)
 
 st.pyplot(fig)
