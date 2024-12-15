@@ -1,5 +1,4 @@
 import streamlit as st
-import scipy
 import os
 import gpxpy
 import pandas as pd
@@ -10,7 +9,6 @@ import numpy as np
 import gpxo
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.ndimage import uniform_filter1d
 import matplotlib.image as image
 
 st.title("🎈 My new app")
