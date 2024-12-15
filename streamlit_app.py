@@ -11,10 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as image
 
-st.title("🎈 My new app")
-st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
-)
+
 
 
 import gpxpy
