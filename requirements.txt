@@ -3,7 +3,6 @@ matplotlib
 gpxpy
 geopy
 gpxo
-os
 pandas
 matplotlib
 datetime
