@@ -22,8 +22,8 @@ uploaded_file = st.file_uploader("Téléchargez un fichier GPX", type=["gpx"])
 # Charger le fichier GPX
 #gpx_file = 'alsace.gpx'  # Remplacez par le chemin de votre fichier GPX
 if uploaded_file is not None:
-    with open(uploaded_file, 'r') as f:
-        gpx = gpxpy.parse(f)
+
+    gpx = gpxpy.parse(uploaded_file)
     
     # Extraire les points de trace
     data = []
