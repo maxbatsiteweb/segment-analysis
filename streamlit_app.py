@@ -137,7 +137,7 @@ def compute_pace_variation_from_regression(model1, model2, gradient_range):
 # Fonction pour tracer le graphique de variation d'allure
 def plot_variation_curve(gradient_range, pace_variation):
     fig, ax = plt.subplots()
-    ax.plot(gradient_range, pace_variation, color='gold', linestyle='-', marker='o')
+    ax.plot(gradient_range, pace_variation, color='gold', linestyle='-')
     ax.set_title('Variation d\'Allure entre Partie 1 et Partie 2 par Gradient')
     ax.set_xlabel('Gradient (%)')
     ax.set_ylabel('Variation d\'Allure (%)')
@@ -175,7 +175,7 @@ if uploaded_file:
         st.pyplot(scatter_fig)
 
         # Calculer la variation d'allure par gradient basé sur les modèles de régression
-        gradient_range = np.linspace(filtered_df_segment['grad'].min(), filtered_df_segment['grad'].max(), 10)
+        gradient_range = np.linspace(filtered_df_segment['grad'].min(), filtered_df_segment['grad'].max(), 50)
         gradient_range, pace_variation = compute_pace_variation_from_regression(model1, model2, gradient_range)
 
         # Tracer le graphique de variation d'allure
