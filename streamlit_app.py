@@ -108,11 +108,6 @@ def plot_scatter(df_segment, show_outliers):
     df_part_1 = df_segment[df_segment.part_2 == 0]
     df_part_2 = df_segment[df_segment.part_2 == 1]
 
-    st.write(df_part_1.shape)
-    st.write(df_part_2.shape)
-    st.write(df_part_1.isna().sum())
-    st.write(df_part_2.isna().sum())
-
     model1 = np.poly1d(np.polyfit(df_part_1['grad'], df_part_1['pace'], deg=2))
     model2 = np.poly1d(np.polyfit(df_part_2['grad'], df_part_2['pace'], deg=2))
 
@@ -156,13 +151,7 @@ if uploaded_file:
         df_segment = compute_segment_metrics(df)
 
         # Détection des outliers avec Isolation Forest
-        st.write("Aperçu des données :")
-        st.dataframe(df_segment.head())
-        st.write(df_segment.shape)
         df_segment = detect_outliers(df_segment)
-        st.write("Aperçu des données :")
-        st.dataframe(df_segment.head())
-        st.write(df_segment.shape)
 
         # Ajouter un bouton ON/OFF pour afficher ou masquer les outliers
         show_outliers = st.checkbox("Afficher les outliers")
