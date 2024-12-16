@@ -106,8 +106,8 @@ def plot_scatter(df_segment, show_outliers):
     st.write(df_part_1.shape)
     st.write(df_part_2.shape)
 
-    model1 = np.poly1d(np.polyfit(df_part_1['grad'], df_part_1['pace'], deg=3))
-    model2 = np.poly1d(np.polyfit(df_part_2['grad'], df_part_2['pace'], deg=3))
+    model1 = np.poly1d(np.polyfit(df_part_1['grad'], df_part_1['pace'], deg=2))
+    model2 = np.poly1d(np.polyfit(df_part_2['grad'], df_part_2['pace'], deg=2))
 
     polyline = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 50)
 
