@@ -119,8 +119,8 @@ def plot_scatter(df_segment, show_outliers):
     colors = df_segment['part_2'].map(color_map)
 
     ax.scatter(df_segment['grad'], df_segment['pace'], c=colors)
-    ax.plot(polyline, model1(polyline), color='green', label="Partie 1 (modèle)")
-    ax.plot(polyline, model2(polyline), color='red', label="Partie 2 (modèle)")
+    ax.plot(polyline, model1(polyline), color='green', label="Partie 1")
+    ax.plot(polyline, model2(polyline), color='red', label="Partie 2")
 
     ax.set_title('Allure vs Gradient')
     ax.set_xlabel('Gradient (%)')
