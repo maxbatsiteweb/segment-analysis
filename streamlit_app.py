@@ -103,6 +103,9 @@ def plot_scatter(df_segment, show_outliers):
     df_part_1 = df_segment[df_segment.part_2 == 0]
     df_part_2 = df_segment[df_segment.part_2 == 1]
 
+    st.write(df_part_1.shape)
+    st.write(df_part_2.shape)
+
     model1 = np.poly1d(np.polyfit(df_part_1['grad'], df_part_1['pace'], deg=3))
     model2 = np.poly1d(np.polyfit(df_part_2['grad'], df_part_2['pace'], deg=3))
 
