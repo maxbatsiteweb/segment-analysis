@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from geopy.distance import geodesic  # Pour le calcul de la distance géodésique
+from sklearn.ensemble import IsolationForest  # Pour la détection des outliers
 
 # Fonction pour charger et traiter le fichier GPX
 def load_gpx(uploaded_file):
@@ -75,17 +76,25 @@ def compute_segment_metrics(df):
     df_segment['grad'] = (df_segment['altitude_diff'] / df_segment['distance_diff']) * 100
     df_segment['pace'] = df_segment['sec_diff'] / df_segment['distance_diff']
 
-    # Filtrer les gradients réalistes et supprimer les valeurs aberrantes
-    df_segment = df_segment[(df_segment['grad'] <= 35) & (df_segment['grad'] >= -35)].dropna()
-
     # Ajouter une colonne indiquant la partie (première ou deuxième moitié du parcours)
     df_segment["seconds_start"] = df_segment['seconds'] - df_segment['seconds'].min()
     halfway = df_segment["seconds_start"].max() / 2
     df_segment["part_2"] = df_segment['seconds_start'].apply(lambda x: 0 if x < halfway else 1)
     return df_segment
 
+# Fonction pour détecter et marquer les outliers avec Isolation Forest
+def detect_outliers(df_segment):
+    features = df_segment[['grad', 'pace']]
+    model = IsolationForest(contamination=0.05, random_state=42)
+    df_segment['is_outlier'] = model.fit_predict(features)
+    return df_segment
+
 # Fonction pour tracer le graphique avec ou sans outliers
-def plot_scatter(df_segment):
+def plot_scatter(df_segment, show_outliers):
+    # Filtrer les outliers si nécessaire
+    if not show_outliers:
+        df_segment = df_segment[df_segment['is_outlier'] == 1]
+
     # Régression polynomiale pour chaque partie
     df_part_1 = df_segment[df_segment.part_2 == 0]
     df_part_2 = df_segment[df_segment.part_2 == 1]
@@ -129,11 +138,12 @@ if uploaded_file:
         df = segment_data(df)
         df_segment = compute_segment_metrics(df)
 
+        # Détection des outliers avec Isolation Forest
+        df_segment = detect_outliers(df_segment)
+
         # Ajouter un bouton ON/OFF pour afficher ou masquer les outliers
         show_outliers = st.checkbox("Afficher les outliers")
-        if not show_outliers:
-            df_segment = df_segment[(df_segment['grad'] <= 20) & (df_segment['grad'] >= -20)]
 
         # Tracer le graphique
-        fig = plot_scatter(df_segment)
+        fig = plot_scatter(df_segment, show_outliers)
         st.pyplot(fig)
