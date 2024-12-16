@@ -175,7 +175,7 @@ if uploaded_file:
         st.pyplot(scatter_fig)
 
         # Calculer la variation d'allure par gradient basé sur les modèles de régression
-        gradient_range = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 10)
+        gradient_range = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 100)
         gradient_range, pace_variation = compute_pace_variation_from_regression(model1, model2, gradient_range)
 
         # Tracer le graphique en barres
