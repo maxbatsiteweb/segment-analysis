@@ -105,6 +105,8 @@ def plot_scatter(df_segment, show_outliers):
 
     st.write(df_part_1.shape)
     st.write(df_part_2.shape)
+    st.write(df_part_1.isna().sum())
+    st.write(df_part_2.isna().sum())
 
     #model1 = np.poly1d(np.polyfit(df_part_1['grad'], df_part_1['pace'], deg=2))
     #model2 = np.poly1d(np.polyfit(df_part_2['grad'], df_part_2['pace'], deg=2))
