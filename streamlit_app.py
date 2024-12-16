@@ -146,7 +146,11 @@ if uploaded_file:
         df_segment = compute_segment_metrics(df)
 
         # Détection des outliers avec Isolation Forest
+        st.write("Aperçu des données :")
+        st.dataframe(df_segment.head())
         df_segment = detect_outliers(df_segment)
+        st.write("Aperçu des données :")
+        st.dataframe(df_segment.head())
 
         # Ajouter un bouton ON/OFF pour afficher ou masquer les outliers
         show_outliers = st.checkbox("Afficher les outliers")
