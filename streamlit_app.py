@@ -97,7 +97,7 @@ def detect_outliers(df_segment):
 def plot_scatter(df_segment, show_outliers):
 
     # Filtrer les données qui ont des Nan pace / gradient
-    df_segment.dropna(subset=["grade", "pace"], inplace=True)
+    df_segment.dropna(subset=['grad', 'pace'], inplace=True)
     
     
     # Filtrer les outliers si nécessaire
