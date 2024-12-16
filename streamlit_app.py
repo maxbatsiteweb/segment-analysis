@@ -138,6 +138,8 @@ def compute_pace_variation_from_regression(model1, model2, gradient_range):
 def plot_variation_curve(gradient_range, pace_variation):
     fig, ax = plt.subplots()
     ax.plot(gradient_range, pace_variation, color='gold', linestyle='-')
+    ax.axhline(y=0, color='darkgray', linewidth=1, label='Base (0%)')
+
     ax.set_title('Variation d\'Allure entre Partie 1 et Partie 2 par Gradient')
     ax.set_xlabel('Gradient (%)')
     ax.set_ylabel('Variation d\'Allure (%)')
