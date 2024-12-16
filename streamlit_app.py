@@ -101,6 +101,10 @@ def assign_parts(df_segment, num_parts):
 
 # Fonction pour tracer le graphique avec ou sans outliers
 def plot_scatter(df_segment, show_outliers, num_parts):
+
+    # Supprimer données manquantes pour grade et pace
+    df_segment.dropna(subset=["grad", "pace"], inplace=True)
+    
     # Filtrer les outliers si nécessaire
     if not show_outliers:
         df_segment = df_segment[df_segment['is_outlier'] == 1]
