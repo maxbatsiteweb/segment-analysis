@@ -125,26 +125,19 @@ def plot_scatter(df_segment, show_outliers):
     ax.legend()
     ax.grid(True)
 
-    return fig
+    return fig, model1, model2
 
-# Fonction pour calculer le pourcentage de variation d'allure par gradient
-def compute_pace_variation(df_segment):
-    # Séparer les deux parties
-    part_1 = df_segment[df_segment['part_2'] == 0]
-    part_2 = df_segment[df_segment['part_2'] == 1]
-
-    # Regrouper par gradient arrondi
-    part_1_avg = part_1.groupby(part_1['grad'].round())['pace'].mean()
-    part_2_avg = part_2.groupby(part_2['grad'].round())['pace'].mean()
-
-    # Combiner les deux parties pour calculer la variation
-    pace_variation = ((part_2_avg - part_1_avg) / part_1_avg * 100).dropna()
-    return pace_variation
+# Fonction pour calculer le pourcentage de variation d'allure basé sur la régression
+def compute_pace_variation_from_regression(model1, model2, gradient_range):
+    part_1_pace = model1(gradient_range)
+    part_2_pace = model2(gradient_range)
+    pace_variation = ((part_2_pace - part_1_pace) / part_1_pace) * 100
+    return gradient_range, pace_variation
 
 # Fonction pour tracer le graphique en barres
-def plot_bar_chart(pace_variation):
+def plot_bar_chart(gradient_range, pace_variation):
     fig, ax = plt.subplots()
-    ax.bar(pace_variation.index, pace_variation.values, color='skyblue')
+    ax.bar(gradient_range, pace_variation, color='skyblue')
     ax.set_title('Variation d\'Allure entre Partie 1 et Partie 2 par Gradient')
     ax.set_xlabel('Gradient (%)')
     ax.set_ylabel('Variation d\'Allure (%)')
@@ -178,12 +171,13 @@ if uploaded_file:
         show_outliers = st.checkbox("Afficher les outliers")
 
         # Tracer le nuage de points
-        scatter_fig = plot_scatter(df_segment, show_outliers)
+        scatter_fig, model1, model2 = plot_scatter(df_segment, show_outliers)
         st.pyplot(scatter_fig)
 
-        # Calculer la variation d'allure par gradient
-        pace_variation = compute_pace_variation(df_segment)
+        # Calculer la variation d'allure par gradient basé sur les modèles de régression
+        gradient_range = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 10)
+        gradient_range, pace_variation = compute_pace_variation_from_regression(model1, model2, gradient_range)
 
         # Tracer le graphique en barres
-        bar_fig = plot_bar_chart(pace_variation)
+        bar_fig = plot_bar_chart(gradient_range, pace_variation)
         st.pyplot(bar_fig)
