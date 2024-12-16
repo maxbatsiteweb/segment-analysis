@@ -125,7 +125,7 @@ def plot_scatter(df_segment, show_outliers):
     ax.legend()
     ax.grid(True)
 
-    return fig, model1, model2
+    return fig, model1, model2, df_segment
 
 # Fonction pour calculer le pourcentage de variation d'allure basé sur la régression
 def compute_pace_variation_from_regression(model1, model2, gradient_range):
@@ -134,14 +134,14 @@ def compute_pace_variation_from_regression(model1, model2, gradient_range):
     pace_variation = ((part_2_pace - part_1_pace) / part_1_pace) * 100
     return gradient_range, pace_variation
 
-# Fonction pour tracer le graphique en barres
-def plot_bar_chart(gradient_range, pace_variation):
+# Fonction pour tracer le graphique de variation d'allure
+def plot_variation_curve(gradient_range, pace_variation):
     fig, ax = plt.subplots()
-    ax.bar(gradient_range, pace_variation, color='skyblue')
+    ax.plot(gradient_range, pace_variation, color='gold', linestyle='-', marker='o')
     ax.set_title('Variation d\'Allure entre Partie 1 et Partie 2 par Gradient')
     ax.set_xlabel('Gradient (%)')
     ax.set_ylabel('Variation d\'Allure (%)')
-    ax.grid(True, axis='y', linestyle='--', alpha=0.7)
+    ax.grid(True, linestyle='--', alpha=0.7)
     return fig
 
 # Application Streamlit principale
@@ -171,13 +171,13 @@ if uploaded_file:
         show_outliers = st.checkbox("Afficher les outliers")
 
         # Tracer le nuage de points
-        scatter_fig, model1, model2 = plot_scatter(df_segment, show_outliers)
+        scatter_fig, model1, model2, filtered_df_segment = plot_scatter(df_segment, show_outliers)
         st.pyplot(scatter_fig)
 
         # Calculer la variation d'allure par gradient basé sur les modèles de régression
-        gradient_range = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 100)
+        gradient_range = np.linspace(filtered_df_segment['grad'].min(), filtered_df_segment['grad'].max(), 10)
         gradient_range, pace_variation = compute_pace_variation_from_regression(model1, model2, gradient_range)
 
-        # Tracer le graphique en barres
-        bar_fig = plot_bar_chart(gradient_range, pace_variation)
-        st.pyplot(bar_fig)
+        # Tracer le graphique de variation d'allure
+        variation_fig = plot_variation_curve(gradient_range, pace_variation)
+        st.pyplot(variation_fig)
