@@ -30,7 +30,6 @@ def load_gpx(uploaded_file):
 def clean_data(df):
     return df.dropna()
 
-
 # Fonction pour calculer les métriques principales
 def compute_metrics(df):
     alt_dif, dist_geo_no_alt, dist_dif_geo_2d = [0], [0], [0]
@@ -95,10 +94,8 @@ def detect_outliers(df_segment):
 
 # Fonction pour tracer le graphique avec ou sans outliers
 def plot_scatter(df_segment, show_outliers):
-
     # Filtrer les données qui ont des Nan pace / gradient
     df_segment.dropna(subset=['grad', 'pace'], inplace=True)
-    
     
     # Filtrer les outliers si nécessaire
     if not show_outliers:
@@ -130,6 +127,30 @@ def plot_scatter(df_segment, show_outliers):
 
     return fig
 
+# Fonction pour calculer le pourcentage de variation d'allure par gradient
+def compute_pace_variation(df_segment):
+    # Séparer les deux parties
+    part_1 = df_segment[df_segment['part_2'] == 0]
+    part_2 = df_segment[df_segment['part_2'] == 1]
+
+    # Regrouper par gradient arrondi
+    part_1_avg = part_1.groupby(part_1['grad'].round())['pace'].mean()
+    part_2_avg = part_2.groupby(part_2['grad'].round())['pace'].mean()
+
+    # Combiner les deux parties pour calculer la variation
+    pace_variation = ((part_2_avg - part_1_avg) / part_1_avg * 100).dropna()
+    return pace_variation
+
+# Fonction pour tracer le graphique en barres
+def plot_bar_chart(pace_variation):
+    fig, ax = plt.subplots()
+    ax.bar(pace_variation.index, pace_variation.values, color='skyblue')
+    ax.set_title('Variation d\'Allure entre Partie 1 et Partie 2 par Gradient')
+    ax.set_xlabel('Gradient (%)')
+    ax.set_ylabel('Variation d\'Allure (%)')
+    ax.grid(True, axis='y', linestyle='--', alpha=0.7)
+    return fig
+
 # Application Streamlit principale
 st.title("Analyse de fichier GPX")
 
@@ -156,6 +177,13 @@ if uploaded_file:
         # Ajouter un bouton ON/OFF pour afficher ou masquer les outliers
         show_outliers = st.checkbox("Afficher les outliers")
 
-        # Tracer le graphique
-        fig = plot_scatter(df_segment, show_outliers)
-        st.pyplot(fig)
+        # Tracer le nuage de points
+        scatter_fig = plot_scatter(df_segment, show_outliers)
+        st.pyplot(scatter_fig)
+
+        # Calculer la variation d'allure par gradient
+        pace_variation = compute_pace_variation(df_segment)
+
+        # Tracer le graphique en barres
+        bar_fig = plot_bar_chart(pace_variation)
+        st.pyplot(bar_fig)
