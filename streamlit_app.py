@@ -28,7 +28,7 @@ def load_gpx(uploaded_file):
     return pd.DataFrame(data)
 
 def clean_data(df):
-    return df_segment.dropna()
+    return df.dropna()
 
 
 # Fonction pour calculer les métriques principales
