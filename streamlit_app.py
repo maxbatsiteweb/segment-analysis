@@ -27,10 +27,6 @@ def load_gpx(uploaded_file):
                 })
     return pd.DataFrame(data)
 
-def clean_data(df):
-    return df.dropna()
-
-
 # Fonction pour calculer les métriques principales
 def compute_metrics(df):
     alt_dif, dist_geo_no_alt, dist_dif_geo_2d = [0], [0], [0]
@@ -80,10 +76,6 @@ def compute_segment_metrics(df):
     df_segment['grad'] = (df_segment['altitude_diff'] / df_segment['distance_diff']) * 100
     df_segment['pace'] = df_segment['sec_diff'] / df_segment['distance_diff']
 
-    # Ajouter une colonne indiquant la partie (première ou deuxième moitié du parcours)
-    df_segment["seconds_start"] = df_segment['seconds'] - df_segment['seconds'].min()
-    halfway = df_segment["seconds_start"].max() / 2
-    df_segment["part_2"] = df_segment['seconds_start'].apply(lambda x: 0 if x < halfway else 1)
     return df_segment
 
 # Fonction pour détecter et marquer les outliers avec Isolation Forest
@@ -93,34 +85,41 @@ def detect_outliers(df_segment):
     df_segment['is_outlier'] = model.fit_predict(features)
     return df_segment
 
-# Fonction pour tracer le graphique avec ou sans outliers
-def plot_scatter(df_segment, show_outliers):
+# Fonction pour couper en n parties
+def assign_parts(df_segment, num_parts):
+    max_seconds = df_segment['seconds'].max()
+    part_duration = max_seconds / num_parts
 
-    # Filtrer les données qui ont des Nan pace / gradient
-    df_segment.dropna(subset=['grad', 'pace'], inplace=True)
-    
-    
+    def assign_part(seconds):
+        for part in range(num_parts):
+            if seconds <= (part + 1) * part_duration:
+                return part
+        return num_parts - 1
+
+    df_segment['part'] = df_segment['seconds'].apply(assign_part)
+    return df_segment
+
+# Fonction pour tracer le graphique avec ou sans outliers
+def plot_scatter(df_segment, show_outliers, num_parts):
     # Filtrer les outliers si nécessaire
     if not show_outliers:
         df_segment = df_segment[df_segment['is_outlier'] == 1]
 
-    # Régression polynomiale pour chaque partie
-    df_part_1 = df_segment[df_segment.part_2 == 0]
-    df_part_2 = df_segment[df_segment.part_2 == 1]
+    # Couleurs dynamiques pour chaque partie
+    colors = plt.cm.viridis(np.linspace(0, 1, num_parts))
 
-    model1 = np.poly1d(np.polyfit(df_part_1['grad'], df_part_1['pace'], deg=2))
-    model2 = np.poly1d(np.polyfit(df_part_2['grad'], df_part_2['pace'], deg=2))
-
-    polyline = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 50)
-
-    # Tracer le nuage de points
     fig, ax = plt.subplots()
-    color_map = {0: 'lime', 1: 'lightcoral'}
-    colors = df_segment['part_2'].map(color_map)
 
-    ax.scatter(df_segment['grad'], df_segment['pace'], c=colors)
-    ax.plot(polyline, model1(polyline), color='green', label="Partie 1")
-    ax.plot(polyline, model2(polyline), color='red', label="Partie 2")
+    for part in range(num_parts):
+        df_part = df_segment[df_segment['part'] == part]
+        if len(df_part) > 0:
+            # Régression polynomiale
+            model = np.poly1d(np.polyfit(df_part['grad'], df_part['pace'], deg=3))
+            polyline = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 50)
+
+            # Tracer les points et la courbe
+            ax.scatter(df_part['grad'], df_part['pace'], label=f'Partie {part + 1}', color=colors[part])
+            ax.plot(polyline, model(polyline), color=colors[part])
 
     ax.set_title('Allure vs Gradient')
     ax.set_xlabel('Gradient (%)')
@@ -142,9 +141,6 @@ if uploaded_file:
         st.write("Aperçu des données :")
         st.dataframe(df.head())
 
-        # Clean data
-        df = clean_data(df)
-
         # Calcul des métriques et segmentation
         df = compute_metrics(df)
         df = segment_data(df)
@@ -153,9 +149,13 @@ if uploaded_file:
         # Détection des outliers avec Isolation Forest
         df_segment = detect_outliers(df_segment)
 
+        # Sélection du nombre de parties
+        num_parts = st.slider("Nombre de parties", min_value=2, max_value=4, value=2)
+        df_segment = assign_parts(df_segment, num_parts)
+
         # Ajouter un bouton ON/OFF pour afficher ou masquer les outliers
         show_outliers = st.checkbox("Afficher les outliers")
 
         # Tracer le graphique
-        fig = plot_scatter(df_segment, show_outliers)
+        fig = plot_scatter(df_segment, show_outliers, num_parts)
         st.pyplot(fig)
