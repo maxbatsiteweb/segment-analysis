@@ -27,6 +27,10 @@ def load_gpx(uploaded_file):
                 })
     return pd.DataFrame(data)
 
+def clean_data(df):
+    return df_segment.dropna()
+
+
 # Fonction pour calculer les métriques principales
 def compute_metrics(df):
     alt_dif, dist_geo_no_alt, dist_dif_geo_2d = [0], [0], [0]
@@ -132,6 +136,9 @@ if uploaded_file:
     if df is not None:
         st.write("Aperçu des données :")
         st.dataframe(df.head())
+
+        # Clean data
+        df = clean_data(df)
 
         # Calcul des métriques et segmentation
         df = compute_metrics(df)
