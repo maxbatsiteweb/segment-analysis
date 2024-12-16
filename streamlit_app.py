@@ -113,10 +113,10 @@ def plot_scatter(df_segment, show_outliers):
     st.write(df_part_1.isna().sum())
     st.write(df_part_2.isna().sum())
 
-    #model1 = np.poly1d(np.polyfit(df_part_1['grad'], df_part_1['pace'], deg=2))
-    #model2 = np.poly1d(np.polyfit(df_part_2['grad'], df_part_2['pace'], deg=2))
+    model1 = np.poly1d(np.polyfit(df_part_1['grad'], df_part_1['pace'], deg=2))
+    model2 = np.poly1d(np.polyfit(df_part_2['grad'], df_part_2['pace'], deg=2))
 
-    #polyline = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 50)
+    polyline = np.linspace(df_segment['grad'].min(), df_segment['grad'].max(), 50)
 
     # Tracer le nuage de points
     fig, ax = plt.subplots()
@@ -124,8 +124,8 @@ def plot_scatter(df_segment, show_outliers):
     colors = df_segment['part_2'].map(color_map)
 
     ax.scatter(df_segment['grad'], df_segment['pace'], c=colors)
-    #ax.plot(polyline, model1(polyline), color='green', label="Partie 1 (modèle)")
-    #ax.plot(polyline, model2(polyline), color='red', label="Partie 2 (modèle)")
+    ax.plot(polyline, model1(polyline), color='green', label="Partie 1 (modèle)")
+    ax.plot(polyline, model2(polyline), color='red', label="Partie 2 (modèle)")
 
     ax.set_title('Allure vs Gradient')
     ax.set_xlabel('Gradient (%)')
