@@ -90,6 +90,9 @@ def detect_outliers(df_segment):
     features = df_segment[['grad', 'pace']]
     model = IsolationForest(contamination=0.05, random_state=42)
     df_segment['is_outlier'] = model.fit_predict(features)
+
+    # à modifier, patch
+    df_segment['is_outlier'] = df_segment['pace'].apply(lambda x: 1 if x <0 else 0, axis=1)
     return df_segment
 
 # Fonction pour tracer le graphique avec ou sans outliers
